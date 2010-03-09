@@ -43,6 +43,10 @@ def try_transalte(text, locale)
   end
 end
 
+if ARGV[0].to_s == ""
+  puts "translate_po file.po"
+  exit
+end
 puts "Reading #{ARGV[0]}"
 unless locale = detect_locale(ARGV[0])
   puts "Cannot detect locale, pass full file path"
@@ -60,7 +64,7 @@ File.open(ARGV[0]) do |file|
     trans = try_transalte(remove_comments(t.msgid), locale)
     next unless trans && trans.downcase != remove_comments(t.msgid).downcase
     t.msgstr = try_transalte(remove_comments(t.msgid), locale)
-    puts "#{p.msgid} => #{p.msgstr}"
+    puts "#{t.msgid} => #{t.msgstr}"
   end
 
   File.open(ARGV[0] + ".new", "w") {|f| f.write Pomo::PoFile.to_text(po.sort_by{|x| [*x.msgid].first || ""})}
